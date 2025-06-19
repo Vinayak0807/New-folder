@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 st.set_page_config(page_title="📊 Marketing Strategy - Prescriptive Analytics", layout="wide")
 
@@ -35,10 +36,17 @@ Our objective is to help the marketing team **identify what's working**, **reduc
 > The marketing team is unsure which campaigns drive the most engagement and reach. There is a need to identify high-performing segments, visualize trends, and derive data-backed decisions to improve ROI.
 """)
 
-# Load data directly from a local file
+# Local path fallback and cloud-safe default
+local_path = r"F:\\New folder\\Campaign-Data.csv"
+default_path = "Campaign-Data.csv"
+
 try:
-    df = pd.read_csv(r'F:\New folder\Campaign-Data.csv')
-    st.success("✅ Data loaded successfully from local path.")
+    if os.path.exists(local_path):
+        df = pd.read_csv(local_path)
+        st.success("✅ Data loaded from local system.")
+    else:
+        df = pd.read_csv(default_path)
+        st.success("✅ Data loaded from app directory.")
 
     # Tabs for organized layout
     tab1, tab2, tab3, tab4 = st.tabs(["📁 Data Overview", "📊 KPI Insights", "📉 Heatmap Analysis", "💡 Strategic Insights"])
@@ -101,8 +109,9 @@ try:
         - Consider A/B testing strategies for campaigns with ambiguous performance.
         """)
 
-except FileNotFoundError:
-    st.error("❌ Data file not found at the given path. Please check the path and try again.")
+except Exception as e:
+    st.error("❌ Data file could not be loaded. Please ensure it exists at the specified path or in the app directory.")
+
 
 
 
